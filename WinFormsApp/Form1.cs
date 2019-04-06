@@ -23,6 +23,7 @@ namespace WinFormsApp
         public Form1()
         {
             InitializeComponent();
+            SetStyle(ControlStyles.ResizeRedraw, true);
             SetupColors();
         }
 
@@ -48,11 +49,12 @@ namespace WinFormsApp
             _myBitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height, PixelFormat.Format24bppRgb);
             ColourImage();
             pictureBox1.Image = _myBitmap;
+            pictureBox1.Visible = true;
         }
 
         private void ColourImage()
         {
-            Color c1 = Color.Green;
+            Color c1 = Color.Red;
             for (int gx = 0; gx < _myBitmap.Width; gx++)
             {
                 for (int gy = 0; gy < _myBitmap.Height; gy++)
@@ -65,6 +67,11 @@ namespace WinFormsApp
         private void Form1_Load(object sender, EventArgs e)
         {
             SetupImage();
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
