@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Numerics;
 
@@ -44,6 +45,8 @@ namespace csdnfcalclib
                 }
             }
 
+            AddCaption(image, request);
+
             var result = new CalcResult
             {
                 Image = image
@@ -55,7 +58,7 @@ namespace csdnfcalclib
         public int ComputeCount(Complex c)
         {
             var z = new Complex(c.Real, c.Imaginary);
-            for (var count = 1; count < MaxCount; count++)
+            for (var count = 0; count < MaxCount; count++)
             {
                 z = z * z + c;
                 if (Divergent(z))
@@ -77,7 +80,6 @@ namespace csdnfcalclib
         {
             var colorMap = new Color[NumColors];
             colorMap[0] = Color.FromArgb(0, 0, 0);
-            colorMap[MaxCount % NumColors] = Color.FromArgb(0, 0, 0);
             for (var i = 1; i < NumColors; i++)
             {
                 var r = myRandom.Next() % 256;
@@ -85,6 +87,7 @@ namespace csdnfcalclib
                 var b = myRandom.Next() % 256;
                 colorMap[i] = Color.FromArgb(r, g, b);
             }
+            colorMap[MaxCount % NumColors] = Color.FromArgb(0, 0, 0);
             this.colors = colorMap;
         }
 
@@ -97,6 +100,19 @@ namespace csdnfcalclib
                     b.SetPixel(i, j, Color.Black);
                 }
             }
+        }
+
+        private void AddCaption(Bitmap image, CalcRequest request)
+        {
+            var message =
+                $"({request.FromCorner.Real}, {request.FromCorner.Imaginary}) - ({request.ToCorner.Real}, {request.ToCorner.Imaginary})";
+
+            Graphics g = Graphics.FromImage(image);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.DrawString(message, new Font("Tahoma", 8), Brushes.White, 5.0f, 5.0f);
+            g.Flush();
         }
     }
 }
